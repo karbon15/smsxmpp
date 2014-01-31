@@ -3,6 +3,8 @@ package name.theberge.smsxmpp.asteriskclient;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.DatatypeConverter;
+
 import name.theberge.smsxmpp.common.SMSMessage;
 import name.theberge.smsxmpp.common.SMSMessageFactory;
 
@@ -26,7 +28,7 @@ public class AsteriskSMSMessageFactory implements SMSMessageFactory {
 		    	sms.setFrom(m.group(i));
 		    }
 		    else if(i == 8)	{
-		    	sms.setMessage(m.group(i));
+		    	sms.setMessage(new String(DatatypeConverter.parseBase64Binary(m.group(i))));
 		    }
 	        i++;
 		}
