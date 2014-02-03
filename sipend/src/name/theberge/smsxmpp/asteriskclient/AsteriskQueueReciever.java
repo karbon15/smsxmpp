@@ -22,7 +22,7 @@ public class AsteriskQueueReciever implements QueueListener {
 	}
 	@Override
 	public void notify(SMSMessage s) {
-		System.out.println(s);
+		System.out.println(s.getMessage());
 		
 		PrintWriter writer;
 		try {
