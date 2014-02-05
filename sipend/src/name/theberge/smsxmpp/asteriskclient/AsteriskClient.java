@@ -7,21 +7,15 @@ import java.nio.file.Paths;
 import name.theberge.smsxmpp.common.QueueManager;
 import name.theberge.smsxmpp.common.RabbitQueueManager;
 
-
-
 public class AsteriskClient {
 	public static void main(String[] argv) throws IOException {
+		Path fromxmpp = Paths.get(AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.inputfolder"));
 		
-		//TODO: Make path configurable
-		Path fromxmpp = Paths.get("/var/spool/asterisk/sms");
-		//Path toxmpp = Paths.get("/var/spool/asterisk/outgoing");
-		
-		System.out.println("Init qm");
+		System.out.println("Initialized queue manager");
 		QueueManager qm = new RabbitQueueManager();
-		
-		System.out.println("Init fr");
+		System.out.println("Initialized File Reciever");
 		new AsteriskFileReciever(fromxmpp, qm);
-		System.out.println("Init qr");
+		System.out.println("Initialized Queue Reciever");
 		new AsteriskQueueReciever(qm);
 		
 		new Thread(qm).start();

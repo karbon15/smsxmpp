@@ -9,16 +9,18 @@
     <author>Pier-Luc Théberge</author>
 
     <version>0.1</version>
-    <date>2010/02/01</date>
+    <date>2014/02/01</date>
     <minServerVersion>3.0.0</minServerVersion>
-    <licenseType>gpl</licenseType>
+    <licenseType>other</licenseType>
+    <databaseKey>ofSmsxmpp</databaseKey>
+    <databaseVersion>0</databaseVersion>
 
     <adminconsole>
-        <tab id="smsxmpptab" name="SMSXMPP" url="smsxmpp-admin.jsp" description="Click to manage...">
-            <sidebar id="mysidebar" name="SMSXMPP">
-               <item id="my-plugin" name="SMSXMPP Settings"
+        <tab id="smsxmpptab" name="SMSXMPP" url="smsxmpp-admin.jsp" description="Manage SMSXMPP">
+            <sidebar id="smsxmpp-sidebar" name="SMSXMPP">
+               <item id="smsxmpp-settings" name="SMSXMPP Settings"
                    url="smsxmpp-admin.jsp"
-                   description="Click to administer settings for my plugin" />
+                   description="Manage SMSXMPP Settings" />
             </sidebar>
         </tab>
 

@@ -1,57 +1,60 @@
 <project name="SMSXMPP" basedir="." default="main">
-    <property name="sipend.dir"     value="src"/>
+	<property name="sipend.dir"     value="src"/>
 	<property name="common.dir"     value="../common/src"/>
 
-    <property name="build.dir"   value="build"/>
-    <property name="common.classes.dir" value="${build.dir}/classes/common"/>
+	<property name="build.dir"   value="build"/>
+	<property name="common.classes.dir" value="${build.dir}/classes/common"/>
 	<property name="sipend.classes.dir" value="${build.dir}/classes/sipend"/>
-    <property name="jar.dir"     value="${build.dir}/jar"/>
-	
-	<property name="lib.dir"     value="../common/lib"/>
+	<property name="jar.dir"     value="${build.dir}/jar"/>
 
-    <property name="main.class"  value="name.theberge.smsxmpp.asteriskclient.AsteriskClient"/>
-    <target name="clean">
-        <delete dir="${build.dir}"/>
-    </target>
-	
-	 <target name="common">
-	        <mkdir dir="${common.classes.dir}"/>
-	        <javac srcdir="${common.dir}" destdir="${common.classes.dir}" encoding="UTF-8">
-	        	<classpath>
-	        		<pathelement path="${lib.dir}/rabbitmq-client.jar"/>
-	        		<pathelement path="${lib.dir}/commons-io-1.2.jar"/>
-	        		<pathelement path="${lib.dir}/commons-cli-1-1.jar"/>
-	        	</classpath>
-	        </javac>
-	    </target>
+	<property name="common.lib.dir"     value="../common/lib"/>
+	<property name="sipend.lib.dir"     value="../sipend/lib"/>
 
-    <target name="sipend" depends="common">
-        <mkdir dir="${sipend.classes.dir}"/>
-        <javac srcdir="${sipend.dir}" destdir="${sipend.classes.dir}" encoding="UTF-8" >
-        	<classpath>
-        		<pathelement location="${common.classes.dir}"/>
-        	</classpath>
-    	</javac>
-    </target>
+	<property name="main.class"  value="name.theberge.smsxmpp.asteriskclient.AsteriskClient"/>
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
 
-    <target name="jar" depends="sipend,common">
-        <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/smsxmpp-asteriskclient.jar" basedir="${sipend.classes.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="${main.class}" />
-            </manifest>
-        	<zipgroupfileset dir="${jar.dir}" includes="smsxmpp-common.jar"/>
-        </jar> 
-    	<jar destfile="${jar.dir}/smsxmpp-common.jar" basedir="${common.classes.dir}">
-    	    <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
-    	</jar> 
-    </target>
+	<target name="common">
+		<mkdir dir="${common.classes.dir}"/>
+		<javac srcdir="${common.dir}" destdir="${common.classes.dir}" encoding="UTF-8">
+			<classpath>
+				<pathelement path="${common.lib.dir}/rabbitmq-client.jar"/>
+				<pathelement path="${common.lib.dir}/commons-io-1.2.jar"/>
+				<pathelement path="${common.lib.dir}/commons-cli-1-1.jar"/>
+			</classpath>
+		</javac>
+	</target>
 
-    <target name="run" depends="jar">
-        <java jar="${jar.dir}/smsxmpp-asteriskclient.jar" fork="true" />
-    </target>
+	<target name="sipend" depends="common">
+		<mkdir dir="${sipend.classes.dir}"/>
+		<javac srcdir="${sipend.dir}" destdir="${sipend.classes.dir}" encoding="UTF-8" >
+			<classpath>
+				<pathelement location="${common.classes.dir}"/>
+				<pathelement path="${sipend.lib.dir}/Gsm7BitEncoding-1.0.jar"/>
+			</classpath>
+		</javac>
+	</target>
 
-    <target name="clean-build" depends="clean,jar"/>
-    <target name="main" depends="clean,run"/>
+	<target name="jar" depends="sipend,common">
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/smsxmpp-common.jar" basedir="${common.classes.dir}">
+			<zipgroupfileset dir="${common.lib.dir}" includes="*.jar"/>
+		</jar>
+		<jar destfile="${jar.dir}/smsxmpp-asteriskclient.jar" basedir="${sipend.classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+			<zipgroupfileset dir="${jar.dir}" includes="smsxmpp-common.jar"/>
+			<zipgroupfileset dir="${sipend.lib.dir}" includes="*.jar"/>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar">
+		<java jar="${jar.dir}/smsxmpp-asteriskclient.jar" fork="true" />
+	</target>
+
+	<target name="clean-build" depends="clean,jar"/>
+	<target name="main" depends="clean,run"/>
 
 </project>

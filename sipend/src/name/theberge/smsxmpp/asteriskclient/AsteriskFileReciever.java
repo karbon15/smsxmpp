@@ -14,29 +14,32 @@ import java.nio.file.StandardWatchEventKinds;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mlu.encoding.gsm7bitencoding.Gsm7BitEncoderDecoder;
+
 import name.theberge.smsxmpp.common.FileSystemListener;
 import name.theberge.smsxmpp.common.FileSystemMonitor;
 import name.theberge.smsxmpp.common.QueueManager;
 
-public class AsteriskFileReciever implements FileSystemListener	{
-	
+public class AsteriskFileReciever implements FileSystemListener {
+
 	private Path dir;
 	private FileSystemMonitor monitor;
 	private QueueManager queueManager;
-	
-	public AsteriskFileReciever(Path dir, QueueManager manager) throws IOException {
+
+	public AsteriskFileReciever(Path dir, QueueManager manager)
+			throws IOException {
 		this.dir = dir;
 		this.queueManager = manager;
 		monitor = new FileSystemMonitor(dir);
 		monitor.subscribe(this);
-		
+
 		new Thread(monitor).start();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-        return (WatchEvent<T>)event;
-    }
+	static <T> WatchEvent<T> cast(WatchEvent<?> event) {
+		return (WatchEvent<T>) event;
+	}
 
 	@Override
 	public void notify(WatchEvent e) {
@@ -47,18 +50,21 @@ public class AsteriskFileReciever implements FileSystemListener	{
 			e1.printStackTrace();
 		}
 	}
-	
-	private void processEvent(WatchEvent e) throws IOException	{
-        WatchEvent<Path> ev = cast(e);
-        Path name = ev.context();
-        Path child = dir.resolve(name);
-        
-        if(e.kind().equals(StandardWatchEventKinds.ENTRY_CREATE))	{        	        	
-        	byte[] encoded = Files.readAllBytes(child);
-        	String fileContents = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
-        	//TODO: Singleton Factory?
-        	queueManager.enqueue(new AsteriskSMSMessageFactory().createMessage(fileContents), "toxmpp");
-        	Files.delete(child);
-        } 
+
+	private void processEvent(WatchEvent e) throws IOException {
+		WatchEvent<Path> ev = cast(e);
+		Path name = ev.context();
+		Path child = dir.resolve(name);
+		Gsm7BitEncoderDecoder g = new Gsm7BitEncoderDecoder();
+
+		if (e.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+			byte[] encoded = Files.readAllBytes(child);
+			String fileContents = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
+
+			// TODO: Singleton Factory?
+			queueManager.enqueue(new AsteriskSMSMessageFactory().createMessage(fileContents),
+								AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.outboundq"));
+			Files.delete(child);
+		}
 	}
 }

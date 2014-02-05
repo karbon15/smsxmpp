@@ -6,6 +6,7 @@ import name.theberge.smsxmpp.common.RabbitQueueManager;
 import org.jivesoftware.openfire.component.InternalComponentManager;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
+import org.jivesoftware.util.JiveGlobals;
 import org.xmpp.component.ComponentException;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class SMSXMPPPlugin implements Plugin {
 		XMPPComponent component = new XMPPComponent();
 
 		QueueManager qm = new RabbitQueueManager();
-		qm.setConsumingQueue("toxmpp");
+		qm.setConsumingQueue(JiveGlobals.getProperty("smsxmpp.inboundq"));
 		qm.subscribe(component);
 
 		component.setQueueManager(qm);
@@ -28,7 +29,7 @@ public class SMSXMPPPlugin implements Plugin {
 		new Thread(qm).start();
 		
 		try {
-			componentManager.addComponent("a", component);
+			componentManager.addComponent(JiveGlobals.getProperty("smsxmpp.subdomain"), component);
 		} catch (ComponentException e) {
 			e.printStackTrace();
 		}

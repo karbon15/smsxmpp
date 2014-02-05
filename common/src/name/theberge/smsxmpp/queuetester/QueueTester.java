@@ -11,8 +11,8 @@ public class QueueTester {
 		QueueManager qm = new RabbitQueueManager();
 		SMSMessage s = new SMSMessage();
 		s.setFrom("15143161134");
-		s.setTo("15145536024");
-		s.setMessage("Ainsî va ça vie qui va!");
+		s.setTo("18194522486");
+		s.setMessage("Mow?");
 		qm.enqueue(s, "tosip");
 	}
 }
