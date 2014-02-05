@@ -62,8 +62,7 @@ public class AsteriskFileReciever implements FileSystemListener {
 			String fileContents = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
 
 			// TODO: Singleton Factory?
-			queueManager.enqueue(new AsteriskSMSMessageFactory().createMessage(fileContents),
-								AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.outboundq"));
+			queueManager.enqueue(new AsteriskSMSMessageFactory().createMessage(fileContents));
 			Files.delete(child);
 		}
 	}

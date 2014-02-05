@@ -26,6 +26,11 @@
     	JiveGlobals.setProperty("smsxmpp.subdomain", request.getParameter("subdomain"));
     	JiveGlobals.setProperty("smsxmpp.inboundq", request.getParameter("inboundq"));
     	JiveGlobals.setProperty("smsxmpp.outboundq", request.getParameter("outboundq"));
+    	
+    	JiveGlobals.setProperty("smsxmpp.rabbitmq.host", request.getParameter("rabbitmqhost"));
+    	JiveGlobals.setProperty("smsxmpp.rabbitmq.username", request.getParameter("rabbitmquser"));
+    	JiveGlobals.setProperty("smsxmpp.rabbitmq.password", request.getParameter("rabbitmqpass"));
+    	
     	success = true;
     	message = "Settings saved successfully";
     }	
@@ -49,6 +54,10 @@
     String subdomain = JiveGlobals.getProperty("smsxmpp.subdomain");
     String inboundq = JiveGlobals.getProperty("smsxmpp.inboundq");
     String outboundq = JiveGlobals.getProperty("smsxmpp.outboundq");
+    
+    String rabbitmqhost = JiveGlobals.getProperty("smsxmpp.rabbitmq.host");
+    String rabbitmquser = JiveGlobals.getProperty("smsxmpp.rabbitmq.username");
+    String rabbitmqpass = JiveGlobals.getProperty("smsxmpp.rabbitmq.password");
 %>
 
 <html>
@@ -110,6 +119,18 @@
     		<td width="200"><input type="text" name="outboundq" value="<%= outboundq %>"  id="outboundq"></td>
     		<td><label for="outboundq">Entter the name of the outbound queue</label></td>
     	</tr>
+    	<tr>
+			<td width="200"><input type="text" name="rabbitmqhost" value="<%= rabbitmqhost %>"  id="rabbitmqhost"></td>
+			<td><label for="outboundq">Entter the host for RabbitMQ</label></td>
+		</tr>
+		<tr>
+			<td width="200"><input type="text" name="rabbitmquser" value="<%= rabbitmquser %>"  id="rabbitmquser"></td>
+			<td><label for="outboundq">Entter the username for RabbitMQ</label></td>
+		</tr>
+		<tr>
+			<td width="200"><input type="text" name="rabbitmqpass" value="<%= rabbitmqpass %>"  id="rabbitmqpass"></td>
+			<td><label for="outboundq">Entter the password for RabbitMQ</label></td>
+		</tr>
     </tbody>
     </table>
     <input type="submit" value="Save">
@@ -122,7 +143,7 @@
     Here is a confgurable list of the JID that will be authorized and their phone number mapping
     </p>
     <table cellpadding="3" cellspacing="0" border="0" width="100%">
-    <thead><th width="200">JID</th><th  width="200">Phone number</th><th></th><th></th></thead>
+    <thead><th width="200">JID</th><th width="200">Phone number</th><th></th><th></th></thead>
     <tbody>
     <% for (User u : AuthorizationManager.getInstance().getAllUsers()) { %>
         <tr>

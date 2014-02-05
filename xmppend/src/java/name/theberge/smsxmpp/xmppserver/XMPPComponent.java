@@ -53,6 +53,9 @@ public class XMPPComponent extends AbstractComponent implements QueueListener {
 		if (JiveGlobals.getProperty("smsxmpp.outboundq").isEmpty()) {
 			JiveGlobals.setProperty("smsxmpp.outboundq", "tosip");
 		}
+		if (JiveGlobals.getProperty("smsxmpp.rabbitmq.host").isEmpty()) {
+			JiveGlobals.setProperty("smsxmpp.rabbitmq.host", "localhost");
+		}
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public class XMPPComponent extends AbstractComponent implements QueueListener {
 					m.setFrom(u.getNumber());
 					m.setMessage(received.getBody());
 
-					qm.enqueue(m, JiveGlobals.getProperty("smsxmpp.outboundq"));
+					qm.enqueue(m);
 					Log.debug("Enqueued message " + received.getBody() + " for SIP Delivery");
 				}
 			}

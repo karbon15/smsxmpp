@@ -7,6 +7,7 @@ import org.jivesoftware.openfire.component.InternalComponentManager;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
 import org.jivesoftware.util.JiveGlobals;
+import org.jivesoftware.util.Log;
 import org.xmpp.component.ComponentException;
 
 import java.io.File;
@@ -22,6 +23,11 @@ public class SMSXMPPPlugin implements Plugin {
 
 		QueueManager qm = new RabbitQueueManager();
 		qm.setConsumingQueue(JiveGlobals.getProperty("smsxmpp.inboundq"));
+		qm.setProducingQueue(JiveGlobals.getProperty("smsxmpp.outboundq"));
+		qm.setQueueHost(JiveGlobals.getProperty("smsxmpp.rabbitmq.host"));
+		qm.setQueueUser(JiveGlobals.getProperty("smsxmpp.rabbitmq.username"));
+		qm.setQueuePassword(JiveGlobals.getProperty("smsxmpp.rabbitmq.password"));
+		
 		qm.subscribe(component);
 
 		component.setQueueManager(qm);
