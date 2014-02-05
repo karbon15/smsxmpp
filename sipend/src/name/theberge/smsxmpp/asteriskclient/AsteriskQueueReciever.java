@@ -44,7 +44,7 @@ public class AsteriskQueueReciever implements QueueListener {
 			writer.println("Extension: s");
 			writer.println("Priority: 1");
 			writer.println("Context: smsxmpp-send");
-			writer.println("SetVar: sms_host=did2.voip.les.net");
+			writer.println("SetVar: sms_host=" + AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.smshost"));
 			writer.println("SetVar: sms_from=" + s.getFrom());
 			writer.println("SetVar: sms_to=" + s.getTo());
 			writer.println("SetVar: sms_body=" + s.getMessage());
