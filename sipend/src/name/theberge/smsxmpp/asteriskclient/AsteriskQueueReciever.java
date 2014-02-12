@@ -3,6 +3,7 @@ package name.theberge.smsxmpp.asteriskclient;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.Normalizer;
 import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
@@ -36,20 +37,27 @@ public class AsteriskQueueReciever implements QueueListener {
 			//String encoded = encoder.encode(s.getMessage());
 
 			// TODO: Find a charset
-			// TODO: Split messages too long
-			writer = new PrintWriter(AsteriskClientPropertiesReader
-					.getProperties().getProperty("smsxmpp.outputfolder")
-					+ UUID.randomUUID() + ".sms", "US-ASCII");
-			writer.println("Channel: Local/s@smsxmpp-send");
-			writer.println("Extension: s");
-			writer.println("Priority: 1");
-			writer.println("Context: smsxmpp-send");
-			writer.println("SetVar: sms_host=" + AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.smshost"));
-			writer.println("SetVar: sms_from=" + s.getFrom());
-			writer.println("SetVar: sms_to=" + s.getTo());
-			writer.println("SetVar: sms_body=" + s.getMessage());
-			writer.println("");
-			writer.close();
+			//Splitting messages by line break.  Asterisk doesn't support line breaks.
+			//Sanitizing inspired from http://stackoverflow.com/questions/1963908/how-to-convert-accented-letters-to-regular-char-in-java
+			String[] messages = s.getMessage().split("\n");
+			
+			for(int i = 0; i < messages.length; i++)	{
+				writer = new PrintWriter(AsteriskClientPropertiesReader
+						.getProperties().getProperty("smsxmpp.outputfolder")
+						+ UUID.randomUUID() + ".sms", "UTF-8");
+				writer.println("Channel: Local/s@smsxmpp-send");
+				writer.println("Extension: s");
+				writer.println("Priority: 1");
+				writer.println("Context: smsxmpp-send");
+				writer.println("SetVar: sms_host=" + AsteriskClientPropertiesReader.getProperties().getProperty("smsxmpp.smshost"));
+				writer.println("SetVar: sms_from=" + s.getFrom());
+				writer.println("SetVar: sms_to=" + s.getTo());
+				writer.println("SetVar: sms_body=" + Normalizer.normalize(messages[i], Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", ""));
+				writer.println("");
+				writer.close();
+			}
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
